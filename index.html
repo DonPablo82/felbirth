@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje Especial</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fff5f5 0%, #e3f2fd 100%);
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #card {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-height: 70vh;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease-out;
+        }
+
+        #card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text-block {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .text-block.visible {
+            display: block;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .song {
+            color: #1e88e5;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.8s ease-out;
+        }
+
+        .song.visible {
+            opacity: 1;
+        }
+
+        .song:hover::after {
+            content: "🎵";
+            position: absolute;
+            right: -20px;
+        }
+
+        #startBtn {
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            position: absolute;
+            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+            transition: all 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), transform 0.3s;
+            z-index: 10;
+        }
+
+        #startBtn:hover {
+            transform: scale(1.05);
+            background: #f50057;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: #ff4081;
+            z-index: 1;
+            pointer-events: none;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="card">
+        <!-- El texto se insertará aquí dinámicamente -->
+    </div>
+
+    <button id="startBtn">Mostrar mensaje</button>
+
+    <script>
+        const spotifyURIs = {
+            "Como has estau?": "https://open.spotify.com/intl-es/track/5S7FewmYYyLNdMOfeEcB6P?si=b92421b6ed6648a2",
+            "Ojos verdes": "https://open.spotify.com/intl-es/track/6981hdSOqG8tP6xTqaySa1?si=d5487b37b0774783",
+            "Fin del mundo": "https://open.spotify.com/intl-es/track/2CN6tw3g5nToSBcfZn5xBr?si=66e4515dbe344de8",
+            "Por ti": "https://open.spotify.com/intl-es/track/3lnaMCNOqHZHzUYdHP6TxA?si=facbe6da8d0540b0",
+            "Por un beso de tu boca": "https://open.spotify.com/intl-es/track/6AN5AFLDuiEqaCYBqhat55?si=2660e371b2404c32",
+            "Distancia": "https://open.spotify.com/intl-es/track/078SF4DC2Jf6qalzlFIi2J?si=701be2d276e94c2c",
+            "Tus vueltas": "https://open.spotify.com/intl-es/track/7Ji2e01og2QOFBd8mnVF8L?si=e8eb9ba7453b4055",
+            "Talismán": "https://open.spotify.com/intl-es/track/23wbyzX57usJHzKosmFM5g?si=377d95d928314de6",
+            "Viento": "https://open.spotify.com/intl-es/track/6QJCZyJv1fhkCyZA3lRoAD?si=a4286f3e233a41c4"
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.getElementById('card');
+            const startBtn = document.getElementById('startBtn');
+
+            // Texto dividido por párrafos (cada línea es un párrafo)
+            const paragraphs = [
+                "Hola!! <span class='song'>Como has estau? </span> Me comentaron que hoy es tu cumpleaños, por eso quiero felicitarte, desearte felicidad y éxito en tu vida, también decirte las siguientes palabras (Perdón si es mucho texto).",
+                "Lo hice de una manera un poco distinta, como se que te encanta la música, todas las palabras que estén resaltadas en Azul son canciones las cuales me recuerdan a ti y que me gustaría que escucharas.",
+                "Quiero desearte un feliz día! :D , un día en el cual espero que la pases super bien, que estés acompañada de todos tus seres queridos y te demuestren lo especial que eres, daría mucho por pasar al menos 5 minutos contigo y poder mirar tus <span class='song'>Ojos verdes</span> hasta olvidarme de todo, escucharte hablar y hablar y hablar hasta que llegue el <span class='song'>Fin del mundo</span>, decirte lo que ya sabes, que <span class='song'>Por ti</span> y <span class='song'>Por un beso de tu boca</span>, movería el mundo entero, haría lo que sea por verte, lamentablemente la <span class='song'>Distancia</span> y quizás tú misma me lo impiden, aunque se que nos hemos alejado un poco y quizás ya no existe el mismo interés que hubo en un principio, se que tienes <span class='song'>Tus vueltas</span> en la cabeza y tus razones que así como te confunden también te dan alegrías, y créeme que a pesar de saber eso, yo siempre voy a estar aqui, quizá dejemos de hablar, lo veo muy probable, pase o no pase por el tiempo que sea, tu vas a seguir siendo una de mis metas, no se que pueda pasar ni en tu vida ni en la mía, pero yo daría parte de la mía para tenerte y protegerte como el <span class='song'>Talismán</span> que me motive a seguir adelante, se que el destino me permitirá demostrar todo lo que digo, no quiero que queden como palabras que se las lleva el <span class='song'>Viento</span>.",
+                "No te pido que respondas a estas palabras, si lo quieres hacer hazlo, solo quería hacerte saber y recordarte lo que te había dicho hace tiempito (Aunque faltaron muchas canciones), no me importa si es en vano todo lo que dije, yo me siento tranquilo por haberlo hecho y estoy preparado para lo que sea. 😊."
+            ];
+
+            let currentParagraph = 0;
+
+            // Mover el botón suavemente
+            function moveButton() {
+                const maxX = window.innerWidth - startBtn.offsetWidth - 40;
+                const maxY = window.innerHeight - startBtn.offsetHeight - 40;
+
+                const randomX = 20 + Math.random() * maxX;
+                const randomY = 20 + Math.random() * maxY;
+
+                startBtn.style.left = `${randomX}px`;
+                startBtn.style.top = `${randomY}px`;
+            }
+
+            // Mostrar siguiente párrafo
+            function showNextParagraph() {
+                if (currentParagraph < paragraphs.length) {
+                    const paragraphElement = document.createElement('div');
+                    paragraphElement.className = 'text-block';
+                    paragraphElement.innerHTML = paragraphs[currentParagraph];
+                    card.appendChild(paragraphElement);
+
+                    // Mostrar card después del primer clic
+                    if (currentParagraph === 0) {
+                        card.classList.add('visible');
+                    }
+
+                    // Revelar el párrafo
+                    setTimeout(() => {
+                        paragraphElement.classList.add('visible');
+                        
+                        // Asignar enlaces a todas las canciones
+                        const songs = paragraphElement.querySelectorAll('.song');
+                        songs.forEach(song => {
+                            const songName = song.textContent.trim();
+                            if (spotifyURIs[songName]) {
+                                song.onclick = (e) => {
+                                    e.preventDefault();
+                                    window.open(spotifyURIs[songName], '_blank');
+                                };
+                            }
+                            setTimeout(() => {
+                                song.classList.add('visible');
+                                createHeart(song);
+                            }, 200);
+                        });
+                    }, 50);
+
+                    currentParagraph++;
+                }
+
+                // Ocultar botón al final
+                if (currentParagraph >= paragraphs.length) {
+                    startBtn.textContent = "❤️ Mensaje completo ❤️";
+                    startBtn.style.background = "#4CAF50";
+                    setTimeout(() => {
+                        startBtn.style.display = "none";
+                    }, 2000);
+                }
+            }
+
+            // Crear corazón flotante
+            function createHeart(element) {
+                const rect = element.getBoundingClientRect();
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤️';
+                heart.style.left = `${rect.left + rect.width/2}px`;
+                heart.style.top = `${rect.top}px`;
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 4000);
+            }
+
+            // Evento de clic del botón
+            startBtn.addEventListener('click', () => {
+                moveButton();
+                showNextParagraph();
+            });
+
+            // Posición inicial del botón
+            startBtn.style.left = "50%";
+            startBtn.style.top = "80%";
+            startBtn.style.transform = "translateX(-50%)";
+        });
+    </script>
+</body>
+</html>
